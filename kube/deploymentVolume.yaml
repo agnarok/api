@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate # Outra opção: Recreate
+    rollingUpdate: # Maximo que podem ser desligados simultaneamente
+      maxSurge: 1 # Maximo de pods criados simultaneamente
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      name: api
+  template:
+    metadata:
+      labels:
+        name: api
+    spec:
+      containers:
+      - name: api
+        image: agnarok/api:v0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 0.1
+            memory: 128Mi
+        volumeMounts: # destino dentro do Pod
+        - mountPath: "/data"
+          name: data
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          periodSeconds: 10
+          failureThreshold: 30
+      volumes: # Volume declarado no Kube
+        - name: data
+          persistentVolumeClaim:
+            claimName: pvc1

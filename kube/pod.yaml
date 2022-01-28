@@ -1,0 +1,10 @@
+apiVersion: v1 # Versão da API kubernetes [required]
+kind: Pod # Tipo do objeto que vai ser criado [required]
+metadata: # Informações únicas do objeto [required]
+ name: api
+spec: # Configurações do objeto [required]
+ containers:
+ - name: api
+   image: agnarok/api:latest
+   ports:
+   - containerPort: 8080
